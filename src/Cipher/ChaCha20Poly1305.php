@@ -79,6 +79,7 @@ class ChaCha20Poly1305 implements CipherInterface
      * @return string 加密后的数据
      * @throws CipherException 如果加密失败
      */
+    // @phpstan-ignore-next-line parameterByRef.unusedType
     public function encrypt(string $plaintext, string $key, string $iv, ?string $aad = null, ?string &$tag = null): string
     {
         // 验证密钥长度
@@ -96,6 +97,7 @@ class ChaCha20Poly1305 implements CipherInterface
             throw new CipherException('当前PHP环境不支持ChaCha20-Poly1305加密算法');
         }
 
+        // 确保tag参数总是被赋值
         $tag = '';
         $result = openssl_encrypt(
             $plaintext,
