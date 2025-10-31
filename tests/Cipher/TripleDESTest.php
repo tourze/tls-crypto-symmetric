@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace Tourze\TLSCryptoSymmetric\Tests\Cipher;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tourze\TLSCryptoSymmetric\Cipher\TripleDES;
 use Tourze\TLSCryptoSymmetric\Exception\CipherException;
 
-class TripleDESTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(TripleDES::class)]
+final class TripleDESTest extends TestCase
 {
     public function testGetName(): void
     {
@@ -43,8 +48,14 @@ class TripleDESTest extends TestCase
     public function testEncryptAndDecrypt192Bit(): void
     {
         $cipher = new TripleDES(192);
-        $key = random_bytes($cipher->getKeyLength());
-        $iv = random_bytes($cipher->getIVLength());
+
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = 'This is a test string for TripleDES encryption.';
 
         $ciphertext = $cipher->encrypt($plaintext, $key, $iv);
@@ -58,8 +69,14 @@ class TripleDESTest extends TestCase
     public function testEncryptAndDecrypt128Bit(): void
     {
         $cipher = new TripleDES(128);
-        $key = random_bytes($cipher->getKeyLength()); // 16 bytes for 128-bit 3DES
-        $iv = random_bytes($cipher->getIVLength());
+
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength())); // 16 bytes for 128-bit 3DES
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = 'Another test for 128-bit 3DES.';
 
         $ciphertext = $cipher->encrypt($plaintext, $key, $iv);
@@ -77,7 +94,7 @@ class TripleDESTest extends TestCase
 
         $cipher = new TripleDES(192);
         $key = random_bytes(16); // Invalid length
-        $iv = random_bytes($cipher->getIVLength());
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $cipher->encrypt('test', $key, $iv);
     }
 
@@ -87,7 +104,13 @@ class TripleDESTest extends TestCase
         $this->expectExceptionMessage('IV长度不匹配，需要8字节');
 
         $cipher = new TripleDES(192);
-        $key = random_bytes($cipher->getKeyLength());
+
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
         $iv = random_bytes(7); // Invalid length
         $cipher->encrypt('test', $key, $iv);
     }
@@ -99,7 +122,7 @@ class TripleDESTest extends TestCase
 
         $cipher = new TripleDES(192);
         $key = random_bytes(16); // Invalid length
-        $iv = random_bytes($cipher->getIVLength());
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $cipher->decrypt('testciphertext', $key, $iv);
     }
 
@@ -109,7 +132,13 @@ class TripleDESTest extends TestCase
         $this->expectExceptionMessage('IV长度不匹配，需要8字节');
 
         $cipher = new TripleDES(192);
-        $key = random_bytes($cipher->getKeyLength());
+
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
         $iv = random_bytes(7); // Invalid length
         $cipher->decrypt('testciphertext', $key, $iv);
     }
@@ -120,4 +149,4 @@ class TripleDESTest extends TestCase
         $this->expectExceptionMessage('无效的3DES密钥大小，有效值为128或192位');
         new TripleDES(64);
     }
-} 
+}

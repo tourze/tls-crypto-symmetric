@@ -22,12 +22,13 @@ class TripleDES implements CipherInterface
      * 构造函数
      *
      * @param int $keySize 密钥大小（位），3DES支持128位（仅用于兼容）和192位
+     *
      * @throws CipherException 如果密钥大小无效
      */
     public function __construct(int $keySize = 192)
     {
         // 验证密钥大小
-        if (!in_array($keySize, [128, 192])) {
+        if (!in_array($keySize, [128, 192], true)) {
             throw new CipherException('无效的3DES密钥大小，有效值为128或192位');
         }
 
@@ -36,21 +37,18 @@ class TripleDES implements CipherInterface
 
     /**
      * 获取加密算法名称
-     *
-     * @return string
      */
     public function getName(): string
     {
-        if ($this->keyLength === 16) {
+        if (16 === $this->keyLength) {
             return 'des-ede-cbc'; // 128位密钥（实际使用时，第三个DES使用第一个DES的密钥）
         }
+
         return 'des-ede3-cbc'; // 192位密钥（完整的3DES）
     }
 
     /**
      * 获取加密算法的密钥长度（字节）
-     *
-     * @return int
      */
     public function getKeyLength(): int
     {
@@ -59,8 +57,6 @@ class TripleDES implements CipherInterface
 
     /**
      * 获取加密算法的IV长度（字节）
-     *
-     * @return int
      */
     public function getIVLength(): int
     {
@@ -69,8 +65,6 @@ class TripleDES implements CipherInterface
 
     /**
      * 获取加密算法的块大小（字节）
-     *
-     * @return int
      */
     public function getBlockSize(): int
     {
@@ -80,12 +74,14 @@ class TripleDES implements CipherInterface
     /**
      * 加密数据
      *
-     * @param string $plaintext 明文数据
-     * @param string $key 密钥
-     * @param string $iv 初始化向量
-     * @param string|null $aad 不使用（CBC模式不支持AAD）
-     * @param string|null $tag 不使用（CBC模式不输出认证标签）
+     * @param string      $plaintext 明文数据
+     * @param string      $key       密钥
+     * @param string      $iv        初始化向量
+     * @param string|null $aad       不使用（CBC模式不支持AAD）
+     * @param string|null $tag       不使用（CBC模式不输出认证标签）
+     *
      * @return string 加密后的数据
+     *
      * @throws CipherException 如果加密失败
      */
     public function encrypt(string $plaintext, string $key, string $iv, ?string $aad = null, ?string &$tag = null): string
@@ -110,7 +106,7 @@ class TripleDES implements CipherInterface
             $iv
         );
 
-        if ($result === false) {
+        if (false === $result) {
             throw new CipherException('3DES加密失败: ' . openssl_error_string());
         }
 
@@ -120,12 +116,14 @@ class TripleDES implements CipherInterface
     /**
      * 解密数据
      *
-     * @param string $ciphertext 密文数据
-     * @param string $key 密钥
-     * @param string $iv 初始化向量
-     * @param string|null $aad 不使用（CBC模式不支持AAD）
-     * @param string|null $tag 不使用（CBC模式不需要认证标签）
+     * @param string      $ciphertext 密文数据
+     * @param string      $key        密钥
+     * @param string      $iv         初始化向量
+     * @param string|null $aad        不使用（CBC模式不支持AAD）
+     * @param string|null $tag        不使用（CBC模式不需要认证标签）
+     *
      * @return string 解密后的数据
+     *
      * @throws CipherException 如果解密失败
      */
     public function decrypt(string $ciphertext, string $key, string $iv, ?string $aad = null, ?string $tag = null): string
@@ -150,10 +148,10 @@ class TripleDES implements CipherInterface
             $iv
         );
 
-        if ($result === false) {
+        if (false === $result) {
             throw new CipherException('3DES解密失败: ' . openssl_error_string());
         }
 
         return $result;
     }
-} 
+}

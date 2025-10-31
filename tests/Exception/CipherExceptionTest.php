@@ -2,16 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Tourze\TLSCryptoSymmetric\Tests\Unit\Exception;
+namespace Tourze\TLSCryptoSymmetric\Tests\Exception;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use Tourze\PHPUnitBase\AbstractExceptionTestCase;
 use Tourze\TLSCryptoSymmetric\Exception\CipherException;
 use Tourze\TLSCryptoSymmetric\Exception\CryptoException;
 
 /**
- * @covers \Tourze\TLSCryptoSymmetric\Exception\CipherException
+ * @internal
  */
-class CipherExceptionTest extends TestCase
+#[CoversClass(CipherException::class)]
+final class CipherExceptionTest extends AbstractExceptionTestCase
 {
     public function testException(): void
     {

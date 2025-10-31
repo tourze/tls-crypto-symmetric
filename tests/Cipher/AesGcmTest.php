@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace Tourze\TLSCryptoSymmetric\Tests\Cipher;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tourze\TLSCryptoSymmetric\Cipher\AesGcm;
 use Tourze\TLSCryptoSymmetric\Exception\CipherException;
 
 /**
- * AES-GCM测试类
+ * @internal
  */
-class AesGcmTest extends TestCase
+#[CoversClass(AesGcm::class)]
+final class AesGcmTest extends TestCase
 {
     /**
      * 测试AES-128-GCM
@@ -33,8 +35,14 @@ class AesGcmTest extends TestCase
         $this->assertEquals(16, $cipher->getBlockSize());
 
         // 测试加密和解密
-        $key = random_bytes($cipher->getKeyLength());
-        $iv = random_bytes($cipher->getIVLength());
+
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = 'Hello, World!';
         $aad = 'Additional Data';
 
@@ -64,8 +72,14 @@ class AesGcmTest extends TestCase
         $this->assertEquals(32, $cipher->getKeyLength()); // 256位 = 32字节
 
         // 测试加密和解密
-        $key = random_bytes($cipher->getKeyLength());
-        $iv = random_bytes($cipher->getIVLength());
+
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = 'Hello, World!';
         $aad = 'Additional Data';
 
@@ -83,9 +97,9 @@ class AesGcmTest extends TestCase
     {
         $cipher = new AesGcm(256);
 
-        $key1 = random_bytes($cipher->getKeyLength());
-        $key2 = random_bytes($cipher->getKeyLength());
-        $iv = random_bytes($cipher->getIVLength());
+        $key1 = random_bytes(max(1, $cipher->getKeyLength()));
+        $key2 = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = 'Hello, World!';
 
         $tag1 = null;
@@ -105,9 +119,14 @@ class AesGcmTest extends TestCase
     {
         $cipher = new AesGcm(256);
 
-        $key = random_bytes($cipher->getKeyLength());
-        $iv1 = random_bytes($cipher->getIVLength());
-        $iv2 = random_bytes($cipher->getIVLength());
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv1 = random_bytes(max(1, $cipher->getIVLength()));
+        $iv2 = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = 'Hello, World!';
 
         $tag1 = null;
@@ -127,8 +146,13 @@ class AesGcmTest extends TestCase
     {
         $cipher = new AesGcm(256);
 
-        $key = random_bytes($cipher->getKeyLength());
-        $iv = random_bytes($cipher->getIVLength());
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = 'Hello, World!';
 
         $tag = null;
@@ -149,8 +173,13 @@ class AesGcmTest extends TestCase
     {
         $cipher = new AesGcm(256);
 
-        $key = random_bytes($cipher->getKeyLength());
-        $iv = random_bytes($cipher->getIVLength());
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = 'Hello, World!';
         $aad = 'Additional Data';
 
@@ -168,8 +197,13 @@ class AesGcmTest extends TestCase
     {
         $cipher = new AesGcm(256);
 
-        $key = random_bytes($cipher->getKeyLength());
-        $iv = random_bytes($cipher->getIVLength());
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = 'Hello, World!';
 
         $tag = null;
@@ -177,6 +211,7 @@ class AesGcmTest extends TestCase
 
         // 篡改TAG
         $tamperedTag = $tag;
+        $this->assertNotNull($tamperedTag, 'Tag should not be null');
         $tamperedTag[0] = chr(ord($tamperedTag[0]) ^ 1);
 
         $this->expectException(CipherException::class);
@@ -190,8 +225,13 @@ class AesGcmTest extends TestCase
     {
         $cipher = new AesGcm(256);
 
-        $key = random_bytes($cipher->getKeyLength());
-        $iv = random_bytes($cipher->getIVLength());
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = 'Hello, World!';
 
         $tag = null;
@@ -207,8 +247,8 @@ class AesGcmTest extends TestCase
     public function testInvalidKeyLength(): void
     {
         $cipher = new AesGcm(256);
-        $key = random_bytes($cipher->getKeyLength() - 1); // 少一个字节
-        $iv = random_bytes($cipher->getIVLength());
+        $key = random_bytes(max(1, $cipher->getKeyLength() - 1)); // 少一个字节
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = 'Hello, World!';
 
         $this->expectException(CipherException::class);
@@ -221,8 +261,14 @@ class AesGcmTest extends TestCase
     public function testInvalidIVLength(): void
     {
         $cipher = new AesGcm(256);
-        $key = random_bytes($cipher->getKeyLength());
-        $iv = random_bytes($cipher->getIVLength() - 1); // 少一个字节
+
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength() - 1)); // 少一个字节
         $plaintext = 'Hello, World!';
 
         $this->expectException(CipherException::class);
@@ -235,6 +281,58 @@ class AesGcmTest extends TestCase
     public function testInvalidKeySize(): void
     {
         $this->expectException(CipherException::class);
-        new AesGcm(123); // 不是128、192或256
+        new AesGcm(123);
     }
-} 
+
+    /**
+     * 专门测试 encrypt 方法
+     */
+    public function testEncrypt(): void
+    {
+        $cipher = new AesGcm(256);
+
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
+        $plaintext = 'Test GCM encryption';
+        $aad = 'Additional data';
+        $tag = null;
+
+        $ciphertext = $cipher->encrypt($plaintext, $key, $iv, $aad, $tag);
+
+        $this->assertNotEmpty($ciphertext);
+        $this->assertNotEquals($plaintext, $ciphertext);
+        $this->assertIsString($ciphertext);
+        $this->assertNotNull($tag);
+        $this->assertNotEmpty($tag);
+    }
+
+    /**
+     * 专门测试 decrypt 方法
+     */
+    public function testDecrypt(): void
+    {
+        $cipher = new AesGcm(256);
+
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
+        $plaintext = 'Test GCM decryption';
+        $aad = 'Additional data';
+        $tag = null;
+
+        $ciphertext = $cipher->encrypt($plaintext, $key, $iv, $aad, $tag);
+        $decrypted = $cipher->decrypt($ciphertext, $key, $iv, $aad, $tag);
+
+        $this->assertEquals($plaintext, $decrypted);
+        $this->assertIsString($decrypted);
+    }
+}

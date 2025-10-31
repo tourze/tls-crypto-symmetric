@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace Tourze\TLSCryptoSymmetric\Tests\Cipher;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tourze\TLSCryptoSymmetric\Cipher\AesCbc;
 use Tourze\TLSCryptoSymmetric\Exception\CipherException;
 
 /**
- * AES-CBC测试类
+ * @internal
  */
-class AesCbcTest extends TestCase
+#[CoversClass(AesCbc::class)]
+final class AesCbcTest extends TestCase
 {
     /**
      * 测试AES-128-CBC
@@ -33,8 +35,14 @@ class AesCbcTest extends TestCase
         $this->assertEquals(16, $cipher->getBlockSize());
 
         // 测试加密和解密
-        $key = random_bytes($cipher->getKeyLength());
-        $iv = random_bytes($cipher->getIVLength());
+
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = 'Hello, World!';
 
         $ciphertext = $cipher->encrypt($plaintext, $key, $iv);
@@ -60,8 +68,14 @@ class AesCbcTest extends TestCase
         $this->assertEquals(32, $cipher->getKeyLength()); // 256位 = 32字节
 
         // 测试加密和解密
-        $key = random_bytes($cipher->getKeyLength());
-        $iv = random_bytes($cipher->getIVLength());
+
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = 'Hello, World!';
 
         $ciphertext = $cipher->encrypt($plaintext, $key, $iv);
@@ -84,8 +98,14 @@ class AesCbcTest extends TestCase
         $this->assertEquals(24, $cipher->getKeyLength()); // 192位 = 24字节
 
         // 测试加密和解密
-        $key = random_bytes($cipher->getKeyLength());
-        $iv = random_bytes($cipher->getIVLength());
+
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = 'Hello, World!';
 
         $ciphertext = $cipher->encrypt($plaintext, $key, $iv);
@@ -101,9 +121,9 @@ class AesCbcTest extends TestCase
     {
         $cipher = new AesCbc(256);
 
-        $key1 = random_bytes($cipher->getKeyLength());
-        $key2 = random_bytes($cipher->getKeyLength());
-        $iv = random_bytes($cipher->getIVLength());
+        $key1 = random_bytes(max(1, $cipher->getKeyLength()));
+        $key2 = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = 'Hello, World!';
 
         $ciphertext1 = $cipher->encrypt($plaintext, $key1, $iv);
@@ -119,9 +139,14 @@ class AesCbcTest extends TestCase
     {
         $cipher = new AesCbc(256);
 
-        $key = random_bytes($cipher->getKeyLength());
-        $iv1 = random_bytes($cipher->getIVLength());
-        $iv2 = random_bytes($cipher->getIVLength());
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv1 = random_bytes(max(1, $cipher->getIVLength()));
+        $iv2 = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = 'Hello, World!';
 
         $ciphertext1 = $cipher->encrypt($plaintext, $key, $iv1);
@@ -137,8 +162,13 @@ class AesCbcTest extends TestCase
     {
         $cipher = new AesCbc(256);
 
-        $key = random_bytes($cipher->getKeyLength());
-        $iv = random_bytes($cipher->getIVLength());
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext1 = 'Hello, World!';
         $plaintext2 = 'Hello, OpenSSL!';
 
@@ -155,9 +185,9 @@ class AesCbcTest extends TestCase
     {
         $cipher = new AesCbc(256);
 
-        $key1 = random_bytes($cipher->getKeyLength());
-        $key2 = random_bytes($cipher->getKeyLength());
-        $iv = random_bytes($cipher->getIVLength());
+        $key1 = random_bytes(max(1, $cipher->getKeyLength()));
+        $key2 = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = 'Hello, World!';
 
         try {
@@ -168,8 +198,8 @@ class AesCbcTest extends TestCase
             $this->assertNotEquals($plaintext, $decrypted);
         } catch (CipherException $e) {
             // 在某些环境中，使用错误密钥解密可能会抛出异常
-            // 这种情况下我们只需确认异常被抛出即可
-            $this->assertTrue(true);
+            // 验证异常信息包含相关错误描述
+            $this->assertStringContainsString('解密失败', $e->getMessage());
         }
     }
 
@@ -180,9 +210,14 @@ class AesCbcTest extends TestCase
     {
         $cipher = new AesCbc(256);
 
-        $key = random_bytes($cipher->getKeyLength());
-        $iv1 = random_bytes($cipher->getIVLength());
-        $iv2 = random_bytes($cipher->getIVLength());
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv1 = random_bytes(max(1, $cipher->getIVLength()));
+        $iv2 = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = 'Hello, World!';
 
         try {
@@ -193,8 +228,8 @@ class AesCbcTest extends TestCase
             $this->assertNotEquals($plaintext, $decrypted);
         } catch (CipherException $e) {
             // 在某些环境中，使用错误IV解密可能会抛出异常
-            // 这种情况下我们只需确认异常被抛出即可
-            $this->assertTrue(true);
+            // 验证异常信息包含相关错误描述
+            $this->assertStringContainsString('解密失败', $e->getMessage());
         }
     }
 
@@ -204,8 +239,8 @@ class AesCbcTest extends TestCase
     public function testInvalidKeyLength(): void
     {
         $cipher = new AesCbc(256);
-        $key = random_bytes($cipher->getKeyLength() - 1); // 少一个字节
-        $iv = random_bytes($cipher->getIVLength());
+        $key = random_bytes(max(1, $cipher->getKeyLength() - 1)); // 少一个字节
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = 'Hello, World!';
 
         $this->expectException(CipherException::class);
@@ -218,8 +253,14 @@ class AesCbcTest extends TestCase
     public function testInvalidIVLength(): void
     {
         $cipher = new AesCbc(256);
-        $key = random_bytes($cipher->getKeyLength());
-        $iv = random_bytes($cipher->getIVLength() - 1); // 少一个字节
+
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength() - 1)); // 少一个字节
         $plaintext = 'Hello, World!';
 
         $this->expectException(CipherException::class);
@@ -242,8 +283,13 @@ class AesCbcTest extends TestCase
     {
         $cipher = new AesCbc(256);
 
-        $key = random_bytes($cipher->getKeyLength());
-        $iv = random_bytes($cipher->getIVLength());
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = str_repeat('Long plaintext for testing AES-CBC encryption and decryption. ', 50);
 
         $ciphertext = $cipher->encrypt($plaintext, $key, $iv);
@@ -259,13 +305,64 @@ class AesCbcTest extends TestCase
     {
         $cipher = new AesCbc(256);
 
-        $key = random_bytes($cipher->getKeyLength());
-        $iv = random_bytes($cipher->getIVLength());
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
         $plaintext = '';
 
         $ciphertext = $cipher->encrypt($plaintext, $key, $iv);
         $decrypted = $cipher->decrypt($ciphertext, $key, $iv);
 
         $this->assertEquals($plaintext, $decrypted);
+    }
+
+    /**
+     * 专门测试 encrypt 方法
+     */
+    public function testEncrypt(): void
+    {
+        $cipher = new AesCbc(256);
+
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
+        $plaintext = 'Test encryption';
+
+        $ciphertext = $cipher->encrypt($plaintext, $key, $iv);
+
+        $this->assertNotEmpty($ciphertext);
+        $this->assertNotEquals($plaintext, $ciphertext);
+        $this->assertIsString($ciphertext);
+    }
+
+    /**
+     * 专门测试 decrypt 方法
+     */
+    public function testDecrypt(): void
+    {
+        $cipher = new AesCbc(256);
+
+        // 确保密钥和IV长度为正整数
+        $keyLength = $cipher->getKeyLength();
+        $ivLength = $cipher->getIVLength();
+        $this->assertGreaterThan(0, $keyLength);
+        $this->assertGreaterThan(0, $ivLength);
+        $key = random_bytes(max(1, $cipher->getKeyLength()));
+        $iv = random_bytes(max(1, $cipher->getIVLength()));
+        $plaintext = 'Test decryption';
+
+        $ciphertext = $cipher->encrypt($plaintext, $key, $iv);
+        $decrypted = $cipher->decrypt($ciphertext, $key, $iv);
+
+        $this->assertEquals($plaintext, $decrypted);
+        $this->assertIsString($decrypted);
     }
 }

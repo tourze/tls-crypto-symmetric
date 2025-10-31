@@ -9,4 +9,4 @@ namespace Tourze\TLSCryptoSymmetric\Exception;
  */
 class CipherException extends CryptoException
 {
-} 
+}
